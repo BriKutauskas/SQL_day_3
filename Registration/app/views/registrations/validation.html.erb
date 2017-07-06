@@ -1,0 +1,16 @@
+<h1>Welcome to Joe and Sandro's Donation Site</h1>
+
+<form action="/registrations/validation" method="get"> <!--goes to localhost:3000/controller_name/method_name-->
+  <input type="text" name="fullname" placeholder="Full Name" required><br>
+  <input type="text" name="address" placeholder="Street Address" required><br>
+  <input type="text" name="city" placeholder="City" required><br>
+  <input type="text" name="state" placeholder="State" required><br>
+  <input type="text" name="zip" placeholder="Postal Code" pattern="[0-9]{5}" title="Use 5-digit zip" required><br>
+  <input type="text" name="country" placeholder="Country" required><br>
+  <input type="email" name="email" placeholder="Email address" required><br>
+  <input type="text" name="userid" placeholder="User ID" required><br>
+  <input type="password" name="password" placeholder="Password" required><br> <!--For password pattern attribute, this has to be formatted this way. We goit it from w3-->
+  <input type="submit" name="" value="Submit">
+</form>
+<br>
+<h2 style="color: red;"><%=flash[:error]%></h2>

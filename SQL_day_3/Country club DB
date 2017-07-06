@@ -1,0 +1,31 @@
+CREATE TABLE facilities(id serial PRIMARY KEY, name varchar, member_cost integer, guest_cost integer, initial_out_lay integer, monthly_maintenance integer);
+
+
+CREATE TABLE bookings(id serial PRIMARY KEY, facility_id integer REFERENCES facilities(id), member_id integer REFERENCES members(id), start_time timestamp without time zone, slots integer);
+
+CREATE TABLE members(id serial PRIMARY KEY, surname varchar, first_name varchar, address varchar, zipcode integer, telephone varchar, recommended_by integer REFERENCES members(id), join_date timestamp without time zone);
+
+//Produce a list of start times for bookings by members named 'David Farrell'?
+SELECT bookings.start_time FROM bookings JOIN members ON bookings.member_id=members.id WHERE members.first_name='David' AND members.surname='Farrell';
+
+//Produce a list of the start times for bookings for tennis courts, for the date '2012-09-21'? Return a list of start time and facility name pairings, ordered by the time.
+//Hint: WHERE column_name IN (value1, value2, ...);
+
+SELECT bookings.start_time FROM bookings JOIN facilities ON bookings.facility_id=facilities.id WHERE facilities.name LIKE 'Tennis%' AND start_time > '2012-09-21' AND start_time < '2012-09-22';
+
+//Produce a list of all members who have used a tennis court? Include in your output the name of the court, and the name of the member formatted as first name, surname. Ensure no duplicate data, and order by the first name.
+SELECT DISTINCT members.first_name, members.surname, facilities.name FROM members JOIN bookings ON members.id=bookings.member_id JOIN facilities ON facilities.id=bookings.facility_id WHERE facilities.name LIKE 'Tennis%' ORDER BY members.first_name;
+
+//Produce a number of how many times Nancy Dare has used the pool table facility?
+SELECT DISTINCT count(facilities.name) FROM bookings JOIN members ON members.id=bookings.member_id JOIN facilities ON facilities.id=bookings.facility_id WHERE members.first_name='Nancy' AND members.surname='Dare' AND facilities.name LIKE 'Pool%';
+
+//Produce a list of how many times Nancy Dare has visited each country club facility.
+SELECT members.first_name, members.surname, facilities.name, count(facilities.name) FROM bookings JOIN members ON members.id=bookings.member_id JOIN facilities ON facilities.id=bookings.facility_id WHERE members.first_name='Nancy' AND members.surname='Dare' GROUP BY members.first_name, members.surname, facilities.name;
+
+//Produce a list of all members who have recommended another member? Ensure that there are no duplicates in the list, and that results are ordered by (surname, firstname).
+SELECT DISTINCT me.first_name, me.surname FROM members m JOIN members me ON me.id=m.recommended_by ORDER BY me.surname;
+
+//Output a list of all members, including the individual who recommended them (if any), without using any JOINS. Ensure that there are no duplicates in the list, and that member is formatted as one column and ordered by member.
+
+SELECT DISTINCT me.first_name || ' ' ||  me.surname AS Member,
+  (SELECT m.first_name || ' ' || m.surname AS Recommender FROM members m WHERE m.id=me.recommended_by) FROM members me ORDER BY Member;

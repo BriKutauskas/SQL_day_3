@@ -1,0 +1,116 @@
+Last login: Wed Jul  5 16:59:21 on ttys000
+learn06:~ learn$ psql
+psql: FATAL:  database "learn" does not exist
+learn06:~ learn$ psql
+psql: FATAL:  database "learn" does not exist
+learn06:~ learn$ psql postgres
+psql (9.6.2)
+Type "help" for help.
+
+postgres=# CREATE DATABASE rolodex;
+CREATE DATABASE
+postgres=# \c rolodex;
+You are now connected to database "rolodex" as user "learn".
+rolodex=# CREATE TABLE persons(id serial PRIMARY KEY, given_name varchar, family_name varchar, address varchar, dob varchar, email varchar);
+CREATE TABLE
+rolodex=# INSERT INTO persons(given_name, family_name, address, dob, email);
+ERROR:  syntax error at or near ";"
+LINE 1: ... INTO persons(given_name, family_name, address, dob, email);
+                                                                      ^
+rolodex=# INSERT INTO persons(given_name, family_name, address, dob, email) VALUES('Fred', 'Flinstone', '123 Stoner Street', 'January 10 12000 BC', 'fred@gmail.com');
+INSERT 0 1
+rolodex=# INSERT INTO persons(given_name, family_name, address, dob, email) VALUES('Wilma', 'Flinstone', '123 Stoner Street', 'June 10 12000 BC', 'wilma@gmail.com');
+INSERT 0 1
+rolodex=# INSERT INTO persons(given_name, family_name, address, dob, email) VALUES('Pebbles', 'Flinstone', '123 Stoner Street', 'December 10 12000 BC', 'pebbles@gmail.com');
+INSERT 0 1
+rolodex=# INSERT INTO persons(given_name, family_name, address, dob, email) VALUES('Dino', 'Flinstone', '123 Stoner Street', 'November 0 12000 BC', 'woof@gmail.com');
+INSERT 0 1
+rolodex=# INSERT INTO persons(given_name, family_name, address, dob, email) VALUES('Flint', 'Flinstone', '123 Stoner Street', 'August 21 12000 BC', 'flinty@gmail.com');
+INSERT 0 1
+rolodex=# \d
+             List of relations
+ Schema |      Name      |   Type   | Owner
+--------+----------------+----------+-------
+ public | persons        | table    | learn
+ public | persons_id_seq | sequence | learn
+(2 rows)
+
+rolodex=# \d persons
+                                 Table "public.persons"
+   Column    |       Type        |                      Modifiers
+-------------+-------------------+------------------------------------------------------
+ id          | integer           | not null default nextval('persons_id_seq'::regclass)
+ given_name  | character varying |
+ family_name | character varying |
+ address     | character varying |
+ dob         | character varying |
+ email       | character varying |
+Indexes:
+    "persons_pkey" PRIMARY KEY, btree (id)
+
+rolodex=# \l
+                               List of databases
+    Name    | Owner | Encoding |   Collate   |    Ctype    | Access privileges
+------------+-------+----------+-------------+-------------+-------------------
+ country    | learn | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ dvd_rental | learn | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ postgres   | learn | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ rolodex    | learn | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ template0  | learn | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/learn         +
+            |       |          |             |             | learn=CTc/learn
+ template1  | learn | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/learn         +
+            |       |          |             |             | learn=CTc/learn
+(6 rows)
+
+rolodex=# SELECT * FROM persons
+rolodex-# ;
+ id | given_name | family_name |      address      |         dob          |       email
+----+------------+-------------+-------------------+----------------------+-------------------
+  1 | Fred       | Flinstone   | 123 Stoner Street | January 10 12000 BC  | fred@gmail.com
+  2 | Wilma      | Flinstone   | 123 Stoner Street | June 10 12000 BC     | wilma@gmail.com
+  3 | Pebbles    | Flinstone   | 123 Stoner Street | December 10 12000 BC | pebbles@gmail.com
+  4 | Dino       | Flinstone   | 123 Stoner Street | November 0 12000 BC  | woof@gmail.com
+  5 | Flint      | Flinstone   | 123 Stoner Street | August 21 12000 BC   | flinty@gmail.com
+(5 rows)
+
+rolodex=# INSERT INTO persons(given_name, family_name, address, dob, email) VALUES('Joe', 'DeSoto', '123 Stoner Street', 'April 3 1985', 'joe@gmail.com');
+INSERT 0 1
+rolodex=# UPDATE FROM persons SET address='210 Baker Street' WHERE family_name='Flinstone';
+ERROR:  syntax error at or near "FROM"
+LINE 1: UPDATE FROM persons SET address='210 Baker Street' WHERE fam...
+               ^
+rolodex=# UPDATE persons SET address='210 Baker Street' WHERE family_name='Flinstone';
+UPDATE 5
+rolodex=# SELECT * FROM persons
+rolodex-# ;
+ id | given_name | family_name |      address      |         dob          |       email
+----+------------+-------------+-------------------+----------------------+-------------------
+  6 | Joe        | DeSoto      | 123 Stoner Street | April 3 1985         | joe@gmail.com
+  1 | Fred       | Flinstone   | 210 Baker Street  | January 10 12000 BC  | fred@gmail.com
+  2 | Wilma      | Flinstone   | 210 Baker Street  | June 10 12000 BC     | wilma@gmail.com
+  3 | Pebbles    | Flinstone   | 210 Baker Street  | December 10 12000 BC | pebbles@gmail.com
+  4 | Dino       | Flinstone   | 210 Baker Street  | November 0 12000 BC  | woof@gmail.com
+  5 | Flint      | Flinstone   | 210 Baker Street  | August 21 12000 BC   | flinty@gmail.com
+(6 rows)
+
+rolodex=# DELETE persons WHERE family_name NOT = 'DeSoto';
+ERROR:  syntax error at or near "persons"
+LINE 1: DELETE persons WHERE family_name NOT = 'DeSoto';
+               ^
+rolodex=# DELETE FROM persons WHERE family_name NOT = 'DeSoto';
+ERROR:  syntax error at or near "NOT"
+LINE 1: DELETE FROM persons WHERE family_name NOT = 'DeSoto';
+                                              ^
+rolodex=# DELETE FROM persons WHERE family_name NOT 'DeSoto';
+ERROR:  syntax error at or near "NOT"
+LINE 1: DELETE FROM persons WHERE family_name NOT 'DeSoto';
+                                              ^
+rolodex=# DELETE FROM persons WHERE NOT family_name='DeSoto';
+DELETE 5
+rolodex=# SELECT * FROM persons;
+ id | given_name | family_name |      address      |     dob      |     email
+----+------------+-------------+-------------------+--------------+---------------
+  6 | Joe        | DeSoto      | 123 Stoner Street | April 3 1985 | joe@gmail.com
+(1 row)
+
+rolodex=#

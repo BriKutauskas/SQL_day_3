@@ -1,0 +1,14 @@
+<h1 style="text-align: center;">Welcome, <%=cookies[:fullname]%> to Our Donations Page</h1>
+<h2><%=cookies[:fullname]%>'s Info:</h2>
+<ol style="list-style-type: none;">
+  <li>Address: <%=cookies[:address]%></li>
+  <li>City: <%=cookies[:city]%></li>
+  <li>State: <%=cookies[:state]%></li>
+  <li>Zip: <%=cookies[:zip]%></li>
+  <li>Country: <%=cookies[:country]%></li>
+  <li>E-mail: <%=cookies[:email]%></li>
+</ol>
+<form action="/donations/pay" method="get">
+  <input type="number" name="" value="" placeholder="Amount"><br><br>
+  <input type="submit" name="" value="Pay Us That Amount!">
+</form>
